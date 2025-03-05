@@ -13,7 +13,7 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: #5f41e4;
+    background: #fff;
 }
 
 .container {
@@ -56,12 +56,12 @@ body {
     text-transform: uppercase;
     padding: 0 20px 0 50px;
     border-radius: 6px;
-    border: 1px solid #beb0ff;
+    border: 1px solid #7371fc;
     transition: 0.1s ease;
 }
 
 .search-section .search-input:focus {
-    border-color: #5f41e4;
+    border-color: #7371fc;
 }
 
 .search-section .search-input::placeholder {
@@ -76,18 +76,18 @@ body {
     justify-content: center;
     width: 56px;
     outline: none;
-    color: #5f41e4;
+    color: #7371fc;
     background: #fff;
     border-radius: 6px;
-    border: 1px solid #beb0ff;
+    border: 1px solid #7371fc;
     transition: 0.3s ease;
 
 }
 
 .search-section .location-button:hover {
     color: #fff;
-    background: #5f41e4;
-    border-color: #5f41e4;
+    background: #7371fc;
+    border-color: #7371fc;
 }
 
 .search-section .location-button span {
@@ -156,7 +156,7 @@ body.show-no-results .wather-section {
 
 .hourly-weather {
     padding: 16px 25px;
-    border-top: 1px solid #d5ccff;
+    border-top: 1px solid #7371fc;
 }
 
 .hourly-weather .weather-list {
