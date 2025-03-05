@@ -1,0 +1,125 @@
+/* Reset default styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+/* Trip Name */
+
+.trip-name {
+    text-align: center;
+    font-size: 2rem;
+    margin: 20px 0;
+    color: #2c2c2c;
+}
+
+
+/* Location Section */
+
+.location-container {
+    width: 80%;
+    margin: 20px auto;
+}
+
+.location-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4c45a0;
+    display: flex;
+    align-items: center;
+}
+
+.checkin-icon {
+    width: 20px;
+    margin-right: 8px;
+}
+
+
+/* Location Box */
+
+.location-box {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Location & Time Headers */
+
+.location-header-box {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    text-align: center;
+}
+
+.header-location,
+.header-time {
+    background-color: #4c45a0;
+    color: white;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: center;
+    min-width: 100px;
+    /* ปรับให้กรอบขนาดเท่าตัวอักษร */
+}
+
+.header-time {
+    align-items: center;
+}
+
+
+/* Location List */
+
+.location-list {
+    margin-top: 10px;
+}
+
+.location-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.location-name {
+    flex: 1;
+    text-align: left;
+}
+
+.location-time {
+    flex: 1;
+    text-align: right;
+}
+
+
+/* Add My Trip Button */
+
+.add-trip-button {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+    margin-right: 30px;
+}
+
+.trip-btn {
+    background-color: #4c45a0;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.trip-btn:hover {
+    background-color: #39307d;
+}
