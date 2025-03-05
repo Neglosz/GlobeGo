@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Swiper demo</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
+    />
+    <!-- Link to Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+    <!-- Link Swiper's CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    
+    <!-- Demo styles -->
+    <style>
+      html,
+      body {
+        position: relative;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      } 
+
+      /* ข้อความ Trip */
+      .header {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Playfair Display', serif;
+        font-size: 48px;
+        font-weight: 700;
+        color: #3a2672;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        z-index: 10;
+        text-align: center;
+      }
+
+      .swiper-container {
+        width: 100%;
+        height: 100%;
+      }
+
+  body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-container {
+  width: 80%; /* ปรับขนาดให้เล็กลงเพื่อความสวยงาม */
+  max-width: 600px; /* จำกัดความกว้างไม่ให้ใหญ่เกินไป */
+  height: 400px; /* กำหนดความสูง */
+  border-radius: 10px; /* ทำให้มีมุมโค้งมน */
+  overflow: hidden; /* ป้องกันภาพล้น */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* เพิ่มเงาให้ดูสวย */
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff; /* พื้นหลังของทั้งหน้า */
+}
+
+.swiper-container {
+  width: 80%;
+  max-width: 1500px;
+  height: 1000px;
+  /*background: #fff; /* กำหนดพื้นหลังสีขาว */ 
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 10px; /* เพิ่มระยะห่างขอบ */
+}
+
+.box {
+  width: 700px;
+  height: 500px;
+  background: #eceaea; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 20px; /* ทำให้ขอบมน */
+  box-shadow: 0px 4px 10px rgba(0.2, 0.2, 0.2, 0.2); /* เพิ่มเงา */
+}
+
+
+      .swiper-slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #ffffff;
+        position: relative;
+        text-align: center;
+        overflow: hidden;
+      }
+
+      /*ขนาดรูป*/
+     /* .swiper-slide img {
+        width: 80%;
+        height: 10%;
+        object-fit: cover;
+      }*/
+
+      .swiper-pagination {
+        bottom: 10px;
+        z-index: 20;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ข้อความ Trip ที่อยู่กลางบนของหน้าจอ -->
+    <div class="header">
+      Trip
+    </div>
+
+    <!-- Swiper -->
+    <div class="swiper-container mySwiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="box"></div>
+        </div>
+        <div class="swiper-slide">
+          <div class="box"></div>
+        </div>
+        <div class="swiper-slide">
+          <div class="box"></div>
+        </div>        
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+      var swiper = new Swiper(".mySwiper", {
+        pagination: {
+          el: ".swiper-pagination",
+          dynamicBullets: true,
+        },
+      });
+    </script>
+  </body>
+</html>
