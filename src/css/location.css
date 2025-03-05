@@ -14,7 +14,7 @@
     text-align: center;
     font-size: 2rem;
     margin: 20px 0;
-    color: #2c2c2c;
+    color: #3f3f93;
 }
 
 
@@ -28,7 +28,7 @@
 .location-header {
     font-size: 1.2rem;
     font-weight: bold;
-    color: #4c45a0;
+    color: #3f3f93;
     display: flex;
     align-items: center;
 }
@@ -60,7 +60,7 @@
 
 .header-location,
 .header-time {
-    background-color: #4c45a0;
+    background-color: #3f3f93;
     color: white;
     font-weight: bold;
     padding: 5px 15px;
@@ -110,7 +110,7 @@
 }
 
 .trip-btn {
-    background-color: #4c45a0;
+    background-color: #3f3f93;
     color: white;
     font-size: 1rem;
     padding: 10px 20px;
@@ -121,5 +121,5 @@
 }
 
 .trip-btn:hover {
-    background-color: #39307d;
+    background-color: #3f3f93;
 }
