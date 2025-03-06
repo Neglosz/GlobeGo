@@ -1,0 +1,283 @@
+/* style-index.css */
+
+/* สไตล์ปกติ (Light Mode) */
+.container {
+    padding: 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    background-color: #fff; /* พื้นหลังสีขาวใน Light Mode */
+}
+
+.input-group {
+    position: relative;
+}
+
+.btn {
+    border: none;
+    outline: none;
+    color: #000;
+    font-weight: 500;
+    cursor: pointer;
+    position: sticky;
+    z-index: 0;
+    border-radius: 12px;
+    max-width: 150px;
+    margin-left: calc(50% - 50px);
+}
+body.dark-mode .btn {
+    color: #fff;
+}
+
+.btn::after{
+    content: '';
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border-radius: 10px;
+}
+body.dark-mode .btn::after {
+    background-color: #2d2d2d;
+}
+.btn::before{
+    content: '';
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #ff00c8, #ff0000);
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 600%;
+    z-index: -1;
+    width: calc(100% + .1px);
+    height: calc(100% + .1px);
+    filter: blur(8px);
+    animation: glowing 20s linear;
+    transition: opacity .3s ease-in-out;
+    border-radius: 10px;
+    opacity: 0;
+}
+
+@keyframes glowing {
+    0% {background-position: 0 0;}
+    50% {background-position: 400% 0;}
+    100% {background-position: 0 0;}
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+.input-group i {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #cdc1ff;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+    border: none;
+    border-radius: 9999px !important;
+    font-size: 0.875rem;
+    background-color: #f9fafb; /* พื้นหลังสีขาว */
+    color: #333; /* ข้อความสีเข้ม */
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.calendar .days{
+    background-color: #f9fafb;
+}
+
+body.dark-mode .calendar .days{
+    background-color: #3a3a3a;
+    color: #d1d5db;
+}
+
+.input-group input:focus {
+    border: none;
+    box-shadow: 0 0 8px 1px #a594f9;
+    outline: none;
+}
+
+.calendar {
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: #333; /* ข้อความสีเข้ม */
+    max-width: 100%;
+    width: 100%;
+}
+.flatpickr-calendar {
+    margin-left: calc(50% - 154px);
+}
+
+.image-container{
+    height: 100%;
+    width: 100%;
+}
+
+.image-container img {
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    image-rendering: high-quality;
+}
+
+.image-container img:hover {
+    transform: scale(1.05);
+}
+
+.carousel-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.arrow {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem;
+    border-radius: 9999px;
+    transition: opacity 0.3s;
+}
+
+.arrow:hover {
+    opacity: 0.8;
+}
+
+.generate-btn {
+    background-color: #9333ea;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.generate-btn:hover {
+    background-color: #7e22ce;
+    transform: translateY(-2px);
+}
+
+/* สไตล์สำหรับ Dark Mode */
+body.dark-mode .container {
+    background-color: #1a1a1a; /* พื้นหลังสีเทาเข้มตามภาพ */
+}
+
+body.dark-mode .input-group input {
+    background-color: #3a3a3a; /* พื้นหลังสีขาวสำหรับ input ใน Dark Mode (ตัดกับพื้นหลังเข้ม) */
+    color: #d1d5db; /* ข้อความสีเข้ม */
+    border: none;
+    border-radius: 9999px !important;
+}
+
+body.dark-mode .input-group i {
+    color: #666; /* ไอคอนสีเทาเข้ม */
+}
+
+body.dark-mode .input-group input:focus {
+    box-shadow: 0 0 8px 1px #d1d5db;
+}
+
+body.dark-mode .calendar {
+    background-color: #3a3a3a; /* พื้นหลังเข้มสำหรับปฏิทิน */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3); /* เงาเข้มขึ้น */
+    color: #333; /* ข้อความสีขาว */
+}
+
+body.dark-mode .image-container img {
+    border: 1px solid #666; /* เส้นขอบเข้มเพื่อให้รูปภาพเด่นขึ้น */
+}
+
+body.dark-mode .arrow {
+    background-color: rgba(255, 255, 255, 0.2); /* ปรับสีลูกศรใน carousel */
+    color: #fff; /* สีไอคอนลูกศร */
+}
+
+/* เพิ่มสไตล์สำหรับ Tailwind CSS (ถ้าจำเป็น) */
+body.dark-mode .bg-white {
+    background-color: #2d2d2d !important;
+}
+
+body.dark-mode .text-gray-500 {
+    color: #ccc !important;
+}
+
+body.dark-mode .bg-gray-50 {
+    background-color: #3a3a3a !important;
+}
+
+body.dark-mode .border-purple-300 {
+    border-color: #000 !important;
+}
+
+body.dark-mode .focus:ring-purple-500 {
+    --tw-ring-color: rgba(167, 128, 218, 0.5) !important;
+}
+
+body.dark-mode .bg-purple-600 {
+    background-color: #a780da !important;
+}
+
+body.dark-mode .hover:bg-purple-700 {
+    background-color: #9469cc !important;
+}
+
+
+
+body.dark-mode .flatpickr-calendar {
+    background-color: #2d2d2d; /* พพื้นหลังสีเทาเข้ม */
+    border: 1px solid #444; /* เส้นขอบเข้ม */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* เงาเข้ม */
+    color: #fff; /* ข้อความสีขาว */
+}
+
+body.dark-mode .flatpickr-day {
+    background-color: #2d2d2d; /* พื้นหลังวัน */
+    color: #fff; /* ข้อความสีขาว */
+    border-color: #444; /* เส้นขอบวัน */
+}
+
+body.dark-mode .flatpickr-day:hover,
+body.dark-mode .flatpickr-day:focus {
+    background-color: #7371fc; /* สีเมื่อ hover หรือ focus */
+    color: #fff; /* ข้อความสีขาว */
+}
+
+body.dark-mode .flatpickr-day.selected {
+    background-color: #7371fc; /* สีวันที่เลือก (เข้ากับปุ่ม Generate) */
+    color: #fff; /* ข้อความสีขาว */
+}
+
+body.dark-mode .flatpickr-day.today {
+    background-color: #a594f9; /* สีวันปัจจุบัน */
+    color: #fff; /* ข้อความสีขาว */
+}
+
+body.dark-mode .flatpickr-month {
+    background-color: #2d2d2d; /* พื้นหลังส่วนเดือน */
+    color: #fff; /* ข้อความสีขาว */
+}
+
+body.dark-mode .flatpickr-weekday {
+    background-color: #2d2d2d; /* พื้นหลังวันในสัปดาห์ */
+    color: #ccc; /* ข้อความสีเทาอ่อน */
+}
+
+body.dark-mode .flatpickr-current-month .flatpickr-monthDropdown-months {
+    background-color: #2d2d2d; /* พื้นหลัง Dropdown เดือน */
+    color: #fff; /* ข้อความสีขาว */
+}
+
+body.dark-mode .flatpickr-current-month .numInputWrapper span.arrowUp,
+body.dark-mode .flatpickr-current-month .numInputWrapper span.arrowDown {
+    background-color: #444; /* ปุ่มลูกศรในส่วนเดือน */
+    color: #fff; /* สีไอคอน */
+}

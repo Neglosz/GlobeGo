@@ -3,8 +3,6 @@ const locationButton = document.querySelector(".location-button");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const hourlyWeatherDiv = document.querySelector(".hourly-weather .weather-list");
 
-const API_KEY = "";
-
 //Weather codes for mapping to custom icons
 const weatherCodes = {
     clear: [1000],
@@ -35,7 +33,7 @@ const displayHourlyForecast = (hourlyData) => {
 
         return `<li class = "weather-item">
                         <p class = "time">${time}</p> 
-                        <img src="icons/${weatherIcon}.svg" class = "weather-icon">
+                        <img src="/static/icons/${weatherIcon}.svg" class = "weather-icon">
                         <p class = "temperature">${temperature}°</p> 
                 </li>`;
     }).join("");
@@ -56,7 +54,7 @@ const getWeatherDetails = async (API_URL) => {
         const weatherIcon = Object.keys(weatherCodes).find(icon => weatherCodes[icon].includes(data.current.condition.code));
 
         //Update current weather display
-        currentWeatherDiv.querySelector(".weather-icon").src = `icons/${weatherIcon}.svg`;
+        currentWeatherDiv.querySelector(".weather-icon").src = `/static/icons/${weatherIcon}.svg`;
         currentWeatherDiv.querySelector(".temperature").innerHTML = `${temperature}<span>°C</span>`;
         currentWeatherDiv.querySelector(".description").innerText = description;
 

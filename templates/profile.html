@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - {{ user.name if user.name else user.email }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="profile-card">
+        <div class="profile-content">
+            <div class="profile-image-container">
+                <img id="profileImage" src="{{ user.profile_image if user.profile_image else url_for('static', filename='images/default-profile.jpg') }}" alt="Profile" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+                {% if editing %}
+                    <label for="profileImageInput" class="profile-button upload-button">
+                        <i class='bx bx-camera'></i> Upload Image
+                    </label>
+                    <input type="file" id="profileImageInput" name="profile_image" accept="image/png, image/jpeg, image/gif" style="display: none;" onchange="previewImage(event)">
+                {% endif %}
+            </div>
+            <h1>{{ user.name if user.name else 'Meow' }}</h1>
+            <p>{{ user.email }}</p>
+            
+            <!-- ปุ่มสำหรับสลับระหว่างโหมดดูและโหมดแก้ไข -->
+            <div class="buttons">
+                {% if not editing %}
+                    <button class="profile-button" onclick="toggleEditMode()">
+                        <i class='bx bx-edit'></i> Edit Profile
+                    </button>
+                {% else %}
+                    <form id="editProfileForm" method="POST" action="{{ url_for('update_profile') }}" enctype="multipart/form-data">
+                        <div class="input-box">
+                            <input type="text" name="name" placeholder="Name" value="{{ user.name if user.name else '' }}" required>
+                        </div>
+                        <div class="input-box">
+                            <input type="email" name="email" placeholder="Email" value="{{ user.email }}" required>
+                        </div>
+                        <button type="submit" class="profile-button">
+                            <i class='bx bx-save'></i> Save Changes
+                        </button>
+                        <button type="button" class="profile-button" onclick="toggleEditMode()">
+                            <i class='bx bx-x'></i> Cancel
+                        </button>
+                    </form>
+                {% endif %}
+                <button class="profile-button" onclick="toggleDarkMode()">
+                    <i class='bx bx-moon'></i> Dark Mode 
+                    <span class="toggle-switch" id="darkModeToggle">{% if request.cookies.get('darkMode') == 'on' %}ON{% else %}OFF{% endif %}</span>
+                </button>
+                <button class="profile-button" onclick="logout()">
+                    <i class='bx bx-log-out'></i> Logout
+                </button>
+                <button class="profile-button delete" onclick="deleteAccount()">
+                    <i class='bx bx-trash'></i> Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let editing = false;
+        let originalImageSrc = "{{ user.profile_image if user.profile_image else url_for('static', filename='images/default-profile.jpg') }}";
+    
+        function toggleEditMode() {
+            editing = !editing;
+            const buttonsDiv = document.querySelector('.buttons');
+            const profileImage = document.getElementById('profileImage');
+            
+            if (editing) {
+                // เก็บค่า src เดิมก่อนเริ่มแก้ไข
+                originalImageSrc = profileImage.src;
+                // ซ่อนปุ่ม Edit และแสดงฟอร์มแก้ไขพร้อมตัวเลือกอัปโหลดรูป
+                buttonsDiv.innerHTML = `
+                    <form id="editProfileForm" method="POST" action="{{ url_for('update_profile') }}" enctype="multipart/form-data">
+                        <div class="input-box">
+                            <input type="text" name="name" placeholder="Name" value="{{ user.name if user.name else '' }}" required>
+                        </div>
+                        <div class="input-box">
+                            <input type="email" name="email" placeholder="Email" value="{{ user.email }}" required>
+                        </div>
+                        <label for="profileImageInput" class="profile-button upload-button">
+                            <i class='bx bx-camera'></i> Upload Image
+                        </label>
+                        <input type="file" id="profileImageInput" name="profile_image" accept="image/png, image/jpeg, image/gif" style="display: none;" onchange="previewImage(event)">
+                        <button type="submit" class="profile-button">
+                            <i class='bx bx-save'></i> Save Changes
+                        </button>
+                        <button type="button" class="profile-button" onclick="toggleEditMode()">
+                            <i class='bx bx-x'></i> Cancel
+                        </button>
+                    </form>
+                    <button class="profile-button" onclick="toggleDarkMode()">
+                        <i class='bx bx-moon'></i> Dark Mode 
+                        <span class="toggle-switch" id="darkModeToggle">{% if request.cookies.get('darkMode') == 'on' %}ON{% else %}OFF{% endif %}</span>
+                    </button>
+                    <button class="profile-button" onclick="logout()">
+                        <i class='bx bx-log-out'></i> Logout
+                    </button>
+                    <button class="profile-button delete" onclick="deleteAccount()">
+                        <i class='bx bx-trash'></i> Delete Account
+                    </button>
+                `;
+            } else {
+                // กลับไปแสดงปุ่ม Edit เดิม และรีเซ็ตรูปภาพกลับไปเป็นค่าเดิมที่เก็บไว้
+                buttonsDiv.innerHTML = `
+                    <button class="profile-button" onclick="toggleEditMode()">
+                        <i class='bx bx-edit'></i> Edit Profile
+                    </button>
+                    <button class="profile-button" onclick="toggleDarkMode()">
+                        <i class='bx bx-moon'></i> Dark Mode 
+                        <span class="toggle-switch" id="darkModeToggle">{% if request.cookies.get('darkMode') == 'on' %}ON{% else %}OFF{% endif %}</span>
+                    </button>
+                    <button class="profile-button" onclick="logout()">
+                        <i class='bx bx-log-out'></i> Logout
+                    </button>
+                    <button class="profile-button delete" onclick="deleteAccount()">
+                        <i class='bx bx-trash'></i> Delete Account
+                    </button>
+                `;
+                // รีเซ็ต src ของ profileImage กลับไปเป็นภาพเดิมที่เก็บไว้
+                profileImage.src = originalImageSrc;
+                // รีเซ็ตค่า input file เพื่อลบไฟล์ที่เลือกไว้
+                document.getElementById('profileImageInput').value = '';
+            }
+    
+            // อัปเดตสถานะ Dark Mode ถ้ามี
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeToggle').textContent = 'ON';
+            } else {
+                document.getElementById('darkModeToggle').textContent = 'OFF';
+            }
+        }
+    
+        // ฟังก์ชันแสดงตัวอย่างรูปภาพก่อนอัปโหลด
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const img = document.getElementById('profileImage');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    
+        // Function to toggle dark mode (เก็บใน cookie)
+        let isDarkMode = document.cookie.includes('darkMode=on');
+    
+        // ตรวจสอบ dark mode จาก cookie เมื่อโหลดหน้า
+        window.onload = function() {
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeToggle').textContent = 'ON';
+            }
+        };
+    
+        // Function for Logout
+        function logout() {
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?')) {
+                window.location.href = '{{ url_for("logout") }}';
+            }
+        }
+    
+        // Function for Delete Account
+        function deleteAccount() {
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบบัญชี? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
+                fetch('/delete_account', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `email=${encodeURIComponent('{{ user.email }}')}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('บัญชีของคุณถูกลบเรียบร้อยแล้ว');
+                        window.location.href = '{{ url_for("login_page") }}';
+                    } else {
+                        alert('เกิดข้อผิดพลาดในการลบบัญชี: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('เกิดข้อผิดพลาด: ' + error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

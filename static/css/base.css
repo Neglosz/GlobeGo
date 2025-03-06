@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Ubuntu", serif;
+}
+.navbar{
+    background-color: #fff;
+    height: 80px;
+    margin: 20px;
+    border-radius: 16px;
+    padding: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand{
+    font-weight: 700;
+    font-size: 24px;
+    color: #fff;
+    transition: 0.3s color;
+    margin-left: 10px;
+}
+.login-button{
+    background-color: #009970;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+}
+
+.login-button:hover{
+    background-color: #00b383;
+    transform: scale(1.01);
+}
+
+.navbar-toggle {
+    border: none;
+    font-size: 1.25rem;
+}
+
+.navbar-toggle:focus, .btn-close:focus{
+    box-shadow: none;
+    outline: none;
+}
+
+.nav-link{
+    color: #fff;
+    position: relative;
+    font-weight: 500;
+}
+.nav-item a{
+    font-weight: 500;
+}
+
+.nav-item a:hover{
+    color: #000;
+    font-weight: 700;
+}
+
+.nav-link:hover,.nav-link.active{
+    color: #000;
+}
+@media (min-width: 991px){
+
+    .nav-link::before{
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0%;
+        height: 2px;
+        background-color: #7371fc;
+        visibility: hidden;
+        transition: 0.3s ease-in-out;
+    }
+    body.dark-mode .nav-link::before{
+        background-color: #cdc1ff;
+    }
+
+    .nav-link:hover::before, .nav-link.active::before{
+        width: 100%;
+        visibility: visible;
+    }
+}
+.hero-section {
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+}
+.hero-section::before{
+    height: 100%;
+    content: '';
+    position: absolurete;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.hero-section .container {
+    height: 100%;
+    z-index: 1;
+    position: relative;
+    justify-content: start;
+    align-items: center;
+    margin-top: 110px;
+}
+
+.button-link {
+    position: relative;
+    padding: 10px 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    text-decoration: none;
+    text-transform: uppercase;
+    width: 150px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 30px;
+}
+.button-link span {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    font-size: 14px;
+}
+.button-link .liquid {
+    position: absolute;
+    left: 0;
+    top: -90px;
+    width: 200px;
+    height: 200px;
+    background: #8989ee;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, .5);
+    transition: 0.5s;
+}
+.button-link:hover .liquid {
+    top: -120px;
+}
+.button-link .liquid::before,
+.button-link .liquid::after {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%,-75%);
+}
+.button-link .liquid::before {
+    border-radius: 45%;
+    background: rgba(20, 20, 20, 1);
+    animation: animate 5s linear infinite;
+}
+.button-link .liquid::after {
+    border-radius: 40%;
+    background: rgba(20, 20, 20, 0.5);
+    animation: animate 10s linear infinite;
+}
+@keyframes animate {
+    0% {
+        transform: translate(-50%,-75%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%,-75%) rotate(360deg);
+    }
+}
+
+
+/* เพิ่มใน style.css */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+body.dark-mode .navbar {
+    background-color: #2d2d2d;
+    box-shadow: none;
+}
+
+body.dark-mode .navbar-brand {
+    color: #ffff; /* ปรับสีตามต้องการ */
+}
+
+body.dark-mode .nav-link {
+    color: #666;
+}
+
+body.dark-mode .nav-link:hover,
+body.dark-mode .nav-link.active {
+    color: #cdc1ff;
+    font-weight: 700;
+}
+
+body.dark-mode .login-button {
+    background-color: #5d9cec;
+}
+
+body.dark-mode .login-button:hover {
+    background-color: #4a90e2;
+    transform: scale(1.01);
+}
+
+/* เพิ่มใน style.css */
+.login-button[href*='logout'] {
+    background-color: #5353B4; /* สีสำหรับ Logout */
+}
+
+.login-button[href*='logout']:hover {
+    background-color: #7371fc;
+}
+
+body.dark-mode .login-button[href*='logout'] {
+    background-color: #a780da;
+}
+
+body.dark-mode .login-button[href*='logout']:hover {
+    background-color: #9469cc;
+}

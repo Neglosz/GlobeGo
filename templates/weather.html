@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang = "en">
+{% extends "base.html" %}
+{% block content %}
 <head>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "width=device-width, initial-scale = 1.0">
     <title>Weather App | CoingNepal</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link rel = "stylesheet" href = "style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/weather.css') }}">
 </head>
 <body>
     <div class = "container">
@@ -23,7 +23,7 @@
 
         <!-- No result message -->
         <div class = "no-results">
-            <img src="icons/no-result.svg" class = "weather-icon">
+            <img src="{{ url_for('static', filename='icons/no-result.svg') }}" class = "weather-icon">
             <h3 class = "title"> Something went wrong!</h3>
             <p class = "message">We're unable to retrieve the weather details. Enure you've entered a valid city or try again later.</p>
         </div>
@@ -32,7 +32,7 @@
         <div class = "wather-section">
             <!-- Current -->
             <div class = "current-weather">
-                <img src="icons/clouds.svg" class = "weather-icon">
+                <img src="{{ url_for('static', filename='icons/clouds.svg') }}" class = "weather-icon">
                 <h2 class = "temperature">00<span>°C</span></h2>
                 <p class = "description">Weather description</p> 
             </div>
@@ -44,6 +44,9 @@
         </div>
     </div>
 
-    <script src="script-weather.js"></script>
+    <script>
+        const API_KEY = "{{ weather_api_key }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/script-weather.js') }}"></script>
 </body>
-</html>
+{% endblock %}

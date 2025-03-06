@@ -5,14 +5,13 @@
     margin : 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Montserrat", serif;
 }
 
 body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    min-height: 80vh;
     background: #fff;
 }
 
@@ -24,6 +23,10 @@ body {
     position: relative;
     overflow: hidden;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .container {
+    background: #2d2d2d;
 }
 
 .search-section {
@@ -47,6 +50,10 @@ body {
     transform: translateY(-50%);
 }
 
+body.dark-mode .search-section .input-wrapper span {
+    color: #fff;
+}
+
 .search-section .search-input {
     height: 100%;
     width: 100%;
@@ -58,6 +65,11 @@ body {
     border-radius: 6px;
     border: 1px solid #7371fc;
     transition: 0.1s ease;
+}
+
+body.dark-mode .search-section .search-input {
+    background-color: #444;
+    color: #fff;
 }
 
 .search-section .search-input:focus {
@@ -84,6 +96,10 @@ body {
 
 }
 
+body.dark-mode .location-button {
+    background-color: #444;
+}
+
 .search-section .location-button:hover {
     color: #fff;
     background: #7371fc;
@@ -94,10 +110,14 @@ body {
     font-size: 1.3rem;
 }
 
+body.dark-mode .location-button span {
+    color: #fff;
+}
+
 .no-results {
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 60%;
     width: 100%;
     padding: 40px;
     text-align: center;
@@ -143,6 +163,10 @@ body.show-no-results .wather-section {
     display: flex;
 }
 
+body.dark-mode .current-weather .temperature {
+    color: #fff;
+}
+
 .current-weather .temperature span {
     font-size: 1.56rem;
     font-weight: 500;
@@ -152,6 +176,10 @@ body.show-no-results .wather-section {
 .current-weather .description {
     font-size: 1.25rem;
     font-weight: 500;
+}
+
+body.dark-mode .current-weather .description {
+    color: #fff;
 }
 
 .hourly-weather {
@@ -180,6 +208,10 @@ body.show-no-results .wather-section {
     font-weight: 500;
     align-items: center;
     flex-direction: column;
+}
+
+body.dark-mode .hourly-weather .weather-item {
+    color: #fff;
 }
 
 .hourly-weather .weather-item .weather-icon {

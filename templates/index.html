@@ -1,11 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block content %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlobeGo</title>
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- Font Awesome CSS สำหรับไอคอน -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Tailwind CSS (สำหรับดีไซน์ทันสมัย) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
-    <h1>Hello</h1>
+    <div class="container mx-auto p-6 max-w-4xl">
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Left Section: Inputs and Calendar -->
+            <div class="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
+                <div class="space-y-4">
+                    <!-- Travel Destination Input -->
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <input type="text" id="travel-destination" placeholder="สถานที่ท่องเที่ยว" class="w-full pl-10 pr-4 py-2 border-purple-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <!-- Number of People Input -->
+                    <div class="input-group">
+                        <i class="fas fa-users absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <input type="number" id="number-of-people" placeholder="จำนวนคน" class="w-full pl-10 pr-4 py-2 border-purple-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <!-- Calendar -->
+                    <div class="calendar bg-gray-50 p-4 rounded-lg shadow-inner">
+                        <input type="text" id="calendar-input" placeholder="" class="w-full focus:outline-none days">
+                    </div>
+                    <button class="btn">Generate</button>
+                </div>
+            </div>
+
+            <!-- Right Section: Image and Button -->
+            <div class="w-full md:w-1/2 flex flex-col">
+                <div class="image-container relative mb-4 rounded-lg overflow-hidden shadow-lg">
+                    <img src="{{ url_for('static', filename='images/default_index1.jpg') }}" alt="Travel Destination" class="w-full h-64 object-contain"/>
+                    <div class="carousel-controls absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-4">
+                        <i class="arrow left text-white text-2xl cursor-pointer bg-gray-800 bg-opacity-50 p-2 rounded-full">◀</i>
+                        <i class="arrow right text-white text-2xl cursor-pointer bg-gray-800 bg-opacity-50 p-2 rounded-full">▶</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#calendar-input", {
+            inline: true,           // แสดงปฏิทินตลอดเวลา
+            mode: "range",       // เลือกได้หลายวัน
+            dateFormat: "d-m-Y",    // รูปแบบวันที่
+            minDate: "today",       // เริ่มจากวันปัจจุบัน
+            theme: "light",         // ใช้ธีมสีสว่าง
+        });
+    </script>
 </body>
-</html>
+{% endblock %}
