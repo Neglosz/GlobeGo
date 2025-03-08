@@ -2,31 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Swiper demo</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
-    />
-    <!-- Link to Google Fonts -->
+    <title>Swiper Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 
-    <!-- Link Swiper's CSS -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/swiper/swiper-bundle.min.css"
-    />
-    
-    <!-- Demo styles -->
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+    <!-- Custom Styles -->
     <style>
-      html,
-      body {
-        position: relative;
-        height: 100%;
+      * {
         margin: 0;
         padding: 0;
-      } 
+        box-sizing: border-box;
+      }
 
-      /* ข้อความ Trip */
+      /* พื้นหลังของทั้งหน้า */
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #ffffff; /* พื้นหลังสีขาว */
+        font-family: 'Roboto', sans-serif;
+      }
+
+      /* Header */
       .header {
         position: absolute;
         top: 20px;
@@ -36,106 +39,78 @@
         font-size: 48px;
         font-weight: 700;
         color: #3a2672;
-        letter-spacing: 2px;
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
         z-index: 10;
-        text-align: center;
       }
 
+      /* Swiper Container */
       .swiper-container {
-        width: 100%;
-        height: 100%;
+        width: 80%;
+        max-width: 800px;
+        height: 500px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+        background: #ffffff; /* พื้นหลังสีขาวของ Swiper */
+        padding: 10px;
       }
 
-  body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.swiper-container {
-  width: 80%; /* ปรับขนาดให้เล็กลงเพื่อความสวยงาม */
-  max-width: 600px; /* จำกัดความกว้างไม่ให้ใหญ่เกินไป */
-  height: 400px; /* กำหนดความสูง */
-  border-radius: 10px; /* ทำให้มีมุมโค้งมน */
-  overflow: hidden; /* ป้องกันภาพล้น */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* เพิ่มเงาให้ดูสวย */
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #ffffff; /* พื้นหลังของทั้งหน้า */
-}
-
-.swiper-container {
-  width: 80%;
-  max-width: 1500px;
-  height: 1000px;
-  /*background: #fff; /* กำหนดพื้นหลังสีขาว */ 
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  padding: 10px; /* เพิ่มระยะห่างขอบ */
-}
-
-.box {
-  width: 700px;
-  height: 500px;
-  background: #eceaea; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-  font-weight: bold;
-  border-radius: 20px; /* ทำให้ขอบมน */
-  box-shadow: 0px 4px 10px rgba(0.2, 0.2, 0.2, 0.2); /* เพิ่มเงา */
-}
-
-
+      /* Swiper Slide */
       .swiper-slide {
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #ffffff;
-        position: relative;
         text-align: center;
-        overflow: hidden;
       }
 
-      /*ขนาดรูป*/
-     /* .swiper-slide img {
-        width: 80%;
-        height: 10%;
+      /* รูปภาพใน Swiper */
+      .swiper-slide img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-      }*/
+        border-radius: 15px; /* ทำให้ขอบมน */
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-in-out;
+      }
+      .swiper-slide img:hover {
+        transform: scale(1.05); /* ทำให้ขยายเล็กน้อยเมื่อ hover */
+      }
 
+      
+      /* Swiper Pagination */
       .swiper-pagination {
         bottom: 10px;
-        z-index: 20;
+      }
+
+      /* Swiper Pagination Dots */
+      .swiper-pagination-bullet {
+        background: #3a2672 !important;
+        opacity: 0.7;
+      }
+
+      .swiper-pagination-bullet-active {
+        background: #ff9800 !important;
+        opacity: 1;
       }
     </style>
   </head>
 
   <body>
-    <!-- ข้อความ Trip ที่อยู่กลางบนของหน้าจอ -->
-    <div class="header">
-      Trip
-    </div>
+    <!-- Header -->
+    <div class="header">Trip</div>
 
     <!-- Swiper -->
     <div class="swiper-container mySwiper">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
-          <div class="box"></div>
+          <img src="images/f4ed9e2a7e764de1b13156aed085e462.jpg" alt="Trip Image 1" />
         </div>
         <div class="swiper-slide">
-          <div class="box"></div>
+          <img src="images/483318615c624aff841e227cb76cdb36.jpg" alt="Trip Image 2" />
         </div>
         <div class="swiper-slide">
-          <div class="box"></div>
-        </div>        
+          <img src="images/94e815ddd6494e1e8e9d118093bba0bc.jpg" alt="Trip Image 3" />
+        </div>
       </div>
       <div class="swiper-pagination"></div>
     </div>
