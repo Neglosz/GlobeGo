@@ -8,10 +8,13 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
-from werkzeug.utils import secure_filename
+import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from PIL import Image, ExifTags
 import uuid
 import glob
+import requests
 
 load_dotenv()
 
@@ -19,7 +22,6 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key')  # เปลี่ยนเป็น secret key ที่ปลอดภัย
-
 
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 # การกำหนดค่า Flask-Mail
@@ -48,6 +50,32 @@ users_collection = db.users  # สมมุติว่ามี collection ส�
 
 # ตั้งค่า API Key สำหรับ Gemini
 genai.configure(api_key=gemini_api)
+
+PEXELS_API_KEY = os.getenv('PIXEL_API')  # เปลี่ยนเป็น API Key ของคุณ
+PEXELS_BASE_URL = "https://api.pexels.com/v1/search"
+
+def get_trip_image(keyword):
+    headers = {"Authorization": PEXELS_API_KEY}
+    params = {
+        "query": keyword,
+        "per_page": 1
+    }
+    try:
+        response = requests.get(PEXELS_BASE_URL, headers=headers, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        if "photos" in data and len(data["photos"]) > 0:
+            # ดึง URL จาก "medium" size
+            return data["photos"][0]["src"]["large"]
+        else:
+            print(f"No photos found for '{keyword}'")
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching image from Pexels for {keyword}: {e}")
+    
+    # คืนค่า default image หากไม่พบผลลัพธ์
+    return url_for('static', filename='images/default_trip.jpg')
+
+
 
 # ฟังก์ชันส่งอีเมลรีเซ็ต
 def send_reset_email(email, token):
@@ -101,15 +129,15 @@ def resize_image(file, email, target_size=(512, 512)):
     return f"{email}/{unique_filename}"
 
 # ปรับฟังก์ชัน generate_trips ให้ใช้ location
-def generate_trips(province, date, location=None):
-    model = genai.GenerativeModel('gemini-pro')
-    prompt = f"สร้างทริปการเดินทาง 3 ทริปที่ไม่ซ้ำกันสำหรับจังหวัด {province} ในวันที่ {date}"
+def generate_trips(province, date_range, num_people, location=None):
+    model = genai.GenerativeModel('gemini-2.0-flash')
+    prompt = f"สร้างทริปการเดินทาง 3 ทริปที่ไม่ซ้ำกันสำหรับจังหวัด {province} ในช่วงวันที่ {date_range} โดยมีจำนวนคน {num_people} คน"
     
     if location:
-        prompt += f" โดยคำนึงถึงตำแหน่งปัจจุบันที่อยู่ใกล้กับ {location}"
+        prompt += f" และคำนึงถึงตำแหน่งปัจจุบันที่อยู่ใกล้กับ {location}"
 
     prompt += """
-    พร้อมชื่อทริปสั้นๆ โดยระบุเวลาที่เป็นไปตามความจริงที่สุด และกิจกรรมอย่างละเอียด ถ้าที่เที่ยวในวันนั้นน้อยกว่า2ที่ให้เพิ่มวันได้ ย้ำว่ามีเวลากำกับด้วย และถ้ามีคำแนะนำก็สามารถใส่เข้ามาได้
+    พร้อมชื่อทริปสั้นๆเป็นภาษาอังกฤษ โดยระบุเวลาที่เป็นไปตามความจริงที่สุด และกิจกรรมอย่างละเอียด รายละเอียดกิจกรรมขอเป็นภาษาไทยทั้งหมด ถ้าที่เที่ยวในวันนั้นน้อยกว่า2ที่ให้เพิ่มวันได้ ย้ำว่ามีเวลากำกับด้วย และถ้ามีคำแนะนำก็สามารถใส่เข้ามาได้
     ตอบกลับในรูปแบบ JSON เท่านั้น ห้ามมีอักษรพิเศษ เช่น ``` หรือตัวอักษรนอก JSON:
     {
         "trips": [
@@ -128,8 +156,10 @@ def generate_trips(province, date, location=None):
     raw_response = response.text.strip()
     print("Raw Response:", raw_response)  # ✅ ตรวจสอบค่า API Response
     # ✅ ใช้ Regular Expression เพื่อลบ {{ }} ที่อาจเกิดขึ้น
-    cleaned_response = re.sub(r'{{\s*', '{', raw_response)
-    cleaned_response = re.sub(r'\s*}}', '}', cleaned_response)
+    cleaned_response = re.sub(r'```json|```', '', raw_response)  # ลบ Markdown syntax
+    cleaned_response = re.sub(r'{{\s*', '{', cleaned_response)   # ลบ {{
+    cleaned_response = re.sub(r'\s*}}', '}', cleaned_response)   # ลบ }}
+    cleaned_response = cleaned_response.strip()  # ลบช่องว่างส่วนเกิน
     print("cleaned_response:", cleaned_response)  # ✅ ตรวจสอบค่า API Response
 
     try:
@@ -147,6 +177,7 @@ def generate_trips(province, date, location=None):
     except (json.JSONDecodeError, ValueError) as e:
         print("❌ JSON Decode Failed:", e)  # แจ้งเตือนว่ามีปัญหา
         trips_data = {"trips": []}
+
 
     return trips_data["trips"]
 
@@ -374,12 +405,17 @@ def update_profile():
 @app.route('/get_trips', methods=['POST'])
 def get_trips():
     province = request.form['province']
-    date = request.form['date']
-    location = request.form['location']  # รับค่าตำแหน่งที่อยู่ปัจจุบัน
+    date_range = request.form['date']  # ช่วงวันที่จากปฏิทิน
+    num_people = request.form['num_people']  # จำนวนคน
+    location = request.form.get('location', '')  # ตำแหน่งปัจจุบัน (ถ้ามี)
 
     # ใช้ตำแหน่งที่อยู่ช่วยปรับแต่งทริปให้เหมาะสม
-    trips = generate_trips(province, date, location)
+    trips = generate_trips(province, date_range, num_people, location)
+    for t in trips:
+        t['province'] = province
     print("Final JSON Response:", jsonify(trips=trips).get_json())  # ✅ ตรวจสอบค่าก่อนส่งกลับ
+    session['generated_trips'] = trips
+    session['province'] = province
     return jsonify(trips=trips)
 
 
@@ -412,7 +448,106 @@ def remove_trip():
 def weather_page():
     return render_template('weather.html', weather_api_key=WEATHER_API_KEY)
 
+@app.route('/location/<trip_title>')
+def location(trip_title):
+    # ตรวจสอบว่ามาจากหน้า MyTrips หรือไม่
+    if request.args.get('saved') == 'true':
+        if 'user' not in session:
+            flash('กรุณาเข้าสู่ระบบก่อน')
+            return redirect(url_for('login_page'))
+        
+        email = session['user']
+        user = users_collection.find_one({'email': email})
+        saved_trips = user.get('saved_trips', []) if user else []
+        
+        # ค้นหาทริปจาก saved_trips
+        selected_trip = next((t for t in saved_trips if t['title'] == trip_title), None)
+    else:
+        # ค้นหาทริปจาก session (ทริปที่เพิ่งสร้าง)
+        trips = session.get('generated_trips', [])
+        selected_trip = next((t for t in trips if t['title'] == trip_title), None)
 
+    if not selected_trip:
+        flash('ไม่พบข้อมูลทริป')
+        return redirect(url_for('index'))
+    
+    # เตรียมข้อมูลจังหวัด
+    province = selected_trip.get('province', 'ไม่ทราบจังหวัด')
+    
+    # โหลดรูปภาพหากจำเป็น
+    if 'image' not in selected_trip:
+        selected_trip['image'] = get_trip_image(selected_trip['title'])
+    
+    return render_template('location.html', trip=selected_trip, province=province)
+
+@app.route('/trip')
+def trip():
+    trips = session.get('generated_trips', [])
+    province = session.get('province', 'จังหวัด')
+    for trip in trips:
+        trip.setdefault('province', province)
+        #trip['image'] = get_trip_image(trip['title']) or url_for('static', filename='images/default_trip.jpg')
+    return render_template('trip.html', trips = trips, province=province)
+
+@app.route('/save_trip', methods=['POST'])
+def save_trip():
+    if 'user' not in session:
+        return jsonify({'error': 'กรุณาเข้าสู่ระบบก่อน'}), 401
+    
+    email = session['user']
+    trip_data = request.get_json()
+
+    if not trip_data or 'title' not in trip_data or 'province' not in trip_data:
+        return jsonify({'error': 'ข้อมูลไม่ถูกต้อง'}), 400
+
+    user = users_collection.find_one({'email': email})
+    saved_trips = user.get('saved_trips', [])
+
+    if len(saved_trips) >= 5:
+        return jsonify({'error': 'บันทึกทริปได้สูงสุด 5 ทริป กรุณาลบทริปเก่าออกก่อน'}), 400
+    
+    if any(trip['title'] == trip_data['title'] for trip in saved_trips):
+        return jsonify({'error': 'ทรืปนี้ถูกบันทึกไว้แล้ว'}), 400
+    
+    users_collection.update_one(
+        {'email': email},
+        {'$push': {'saved_trips': trip_data}},
+        upsert=True
+    )
+
+    return jsonify({'success': True})
+
+@app.route('/mytrips')
+def mytrips():
+    if 'user' not in session:
+        return redirect(url_for('login_page'))
+    
+    email = session['user']
+    user = users_collection.find_one({'email': email})
+    saved_trips = user.get('saved_trips', []) if user else []
+
+    return render_template('mytrip.html', trips=saved_trips)
+
+@app.route('/delete_trip', methods=['POST'])
+def delete_trip():
+    if 'user' not in session:
+        return jsonify({'error': 'กรุณาเข้าสู่ระบบก่อน'}), 401
+    
+    email = session['user']
+    trip_title = request.json.get('title')
+
+    users_collection.update_one(
+        {'email': email},
+        {'$pull': {'saved_trips': {'title': trip_title}}}
+    )
+
+    return jsonify({'success': True})
+
+@app.route('/get_trip_image')
+def get_trip_image_endpoint():
+    title = request.args.get('title', '')
+    image_url = get_trip_image(title)
+    return image_url
 
 
 if __name__ == '__main__':

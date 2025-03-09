@@ -1,54 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-
+{% extends "base.html" %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trip Details</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/location.css') }}">
 </head>
 
 <body>
 
     <!-- Trip Name -->
-    <h2 class="trip-name">Trip Name</h2>
+    <h2 class="trip-name">{{ trip.title }}</h2>
 
     <!-- Location Section -->
     <div class="location-container">
         <h3 class="location-header">
-            <img src="icon/location.svg" alt="Check-in" class="checkin-icon"> Location
+            <img src="{{ url_for('static', filename='icons/location.svg') }}" alt="Check-in" class="checkin-icon">
+            {{ province }}
         </h3>
         <div class="location-box">
             <div class="location-header-box">
-                <span class="header-location">Location</span>
-                <span class="header-time">Time</span>
+                <span class="header-location">Time</span>
+                <span class="header-time">Location</span>
             </div>
             <div class="location-list">
+                {% for activity in trip.activities %}
                 <div class="location-item">
-                    <span class="location-name">Location Name</span>
-                    <span class="location-time">00.00 - 00.00 AM</span>
+                    <span class="location-name">{{ activity.split('(')[0]  }}</span>
+                    <span class="location-time">{{ activity.split('(')[1]|replace(')', '') }}</span>
                 </div>
-                <div class="location-item">
-                    <span class="location-name">Location Name</span>
-                    <span class="location-time">00.00 - 00.00 AM</span>
-                </div>
-                <div class="location-item">
-                    <span class="location-name">Location Name</span>
-                    <span class="location-time">00.00 - 00.00 AM</span>
-                </div>
-                <div class="location-item">
-                    <span class="location-name">Location Name</span>
-                    <span class="location-time">00.00 - 00.00 AM</span>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 
     <!-- Add My Trip Button -->
+    {% if request.args.get('saved') != 'true' %}
     <div class="add-trip-button">
-        <button class="trip-btn">Add My Trip</button>
+        <button class="trip-btn">
+            <span class="shadow"></span>
+            <span class="edge"></span>
+            <span class="front text"> ADD MY TRIPS
+            </span>
+        </button>
     </div>
+    {% endif %}
+    <script type="application/json" id="trip-data">
+        {{ trip | tojson | safe }}
+    </script>    
+    <script src="{{ url_for('static', filename='js/location.js') }}"></script>
 
 </body>
-
-</html>
+{% endblock %}

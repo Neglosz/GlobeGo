@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block content %}
   <head>
     <meta charset="utf-8" />
     <title>Swiper Demo</title>
@@ -24,9 +24,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        margin-top: 11.8vh;
         background: #ffffff; /* พื้นหลังสีขาว */
-        font-family: 'Roboto', sans-serif;
       }
 
       /* Header */
@@ -46,13 +45,16 @@
       /* Swiper Container */
       .swiper-container {
         width: 80%;
-        max-width: 800px;
-        height: 500px;
+        height: 800px;
+        margin-left: 10%;
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
         background: #ffffff; /* พื้นหลังสีขาวของ Swiper */
         padding: 10px;
+      }
+      body.dark-mode .swiper-container{
+        background: #2d2d2d;
       }
 
       /* Swiper Slide */
@@ -84,35 +86,80 @@
 
       /* Swiper Pagination Dots */
       .swiper-pagination-bullet {
-        background: #3a2672 !important;
+        background: #cdc1ff !important;
         opacity: 0.7;
+      }
+      body.dark-mode .swiper-pagination-bullet {
+        background: #3d3d3d !important;
       }
 
       .swiper-pagination-bullet-active {
-        background: #ff9800 !important;
+        background: #7371fc !important;
         opacity: 1;
+      }
+      body.dark-mode .swiper-pagination-bullet-active {
+        background: #fff !important;
+      }
+
+      .trip-title-overlay {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 1.2rem;
+      }
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: opacity 0.3s ease;
+      }
+      
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #7367f0;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
     </style>
   </head>
 
   <body>
-    <!-- Header -->
-    <div class="header">Trip</div>
 
     <!-- Swiper -->
     <div class="swiper-container mySwiper">
       <div class="swiper-wrapper">
+        {% for trip in trips %}
         <div class="swiper-slide">
-          <img src="images/f4ed9e2a7e764de1b13156aed085e462.jpg" alt="Trip Image 1" />
+          <a href="{{ url_for('location', trip_title=trip.title) }}?province={{ trip.province }}">
+            <img src="{{ trip.image }}" alt="{{ trip.title }}" />
+            <div class="trip-title-overlay">{{ trip.title }}</div>
+          </a>
         </div>
-        <div class="swiper-slide">
-          <img src="images/483318615c624aff841e227cb76cdb36.jpg" alt="Trip Image 2" />
-        </div>
-        <div class="swiper-slide">
-          <img src="images/94e815ddd6494e1e8e9d118093bba0bc.jpg" alt="Trip Image 3" />
-        </div>
+        {% endfor %}
       </div>
       <div class="swiper-pagination"></div>
+    </div>
+    <div id="trip-loading" class="loading-overlay">
+      <div class="spinner"></div>
     </div>
 
     <!-- Swiper JS -->
@@ -127,5 +174,58 @@
         },
       });
     </script>
+    <script>
+      // แสดง Loading ทันทีที่หน้าโหลด
+      document.getElementById('trip-loading').style.display = 'flex';
+    
+      // ตัวนับภาพที่โหลดสำเร็จ
+      let loadedImages = 0;
+      const totalImages = document.querySelectorAll('.swiper-slide img').length;
+    
+      function checkImageLoad() {
+        loadedImages++;
+        // ตรวจสอบทุกภาพโหลดแล้ว
+        if (loadedImages === totalImages) {
+          document.getElementById('trip-loading').style.display = 'none';
+        }
+      }
+    
+      // โหลดภาพแบบ Asynchronous
+      document.querySelectorAll('.swiper-slide img').forEach(img => {
+        const title = img.parentElement.querySelector('.trip-title-overlay').textContent;
+        
+        // เริ่มต้นด้วยรูป default
+        img.src = "{{ url_for('static', filename='images/default_trip.jpg') }}";
+    
+        // ส่งคำขอดึง URL ภาพจากเซิร์ฟเวอร์
+        fetch(`/get_trip_image?title=${encodeURIComponent(title)}`)
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text();
+          })
+          .then(imageUrl => {
+            const newImg = new Image();
+            newImg.src = imageUrl;
+            newImg.onload = () => {
+              img.src = imageUrl;
+              checkImageLoad();
+            };
+            newImg.onerror = () => {
+              img.src = "{{ url_for('static', filename='images/default_trip.jpg') }}";
+              checkImageLoad();
+            };
+          })
+          .catch(error => {
+            img.src = "{{ url_for('static', filename='images/default_trip.jpg') }}";
+            checkImageLoad();
+          });
+    
+        // ตรวจสอบ error การโหลด
+        img.addEventListener('error', () => {
+          img.src = "{{ url_for('static', filename='images/default_trip.jpg') }}";
+          checkImageLoad();
+        });
+      });
+    </script>
   </body>
-</html>
+{% endblock %}

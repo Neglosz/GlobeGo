@@ -1,6 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
+{% extends "base.html" %}
+{% block content %}
 <head>
 
     <title>MyTrips</title>
@@ -16,103 +15,56 @@
     <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
 
     <!-- CSS File -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mytrip.css') }}">
 
 </head>
 
 <body>
     <div class="list">
         <div data-role="header" data-position="fixed">
-            <h1 style="text-align:center; color: #3F3F93;">MyTrips</h1>
+            <h1>MyTrips</h1>
        </div>
-        
-       <div class="list-item">
-            <div class="list-content">
+        {% for trip in trips %}
+        <div class="list-item">
+            <a href="{{ url_for('location', trip_title=trip.title) }}?province={{ trip.province }}&saved=true"
+                class="list-content"
+                style="text-decoration: none; color: inherit;">
                 <div class="profile">
-                    <img src="images/01.png" alt="...">
+                    <img src="{{ trip.image }}" alt="{{ trip.title }}">
                 </div>
-                <div class="caption" >
-                    <h3>วัดเขาตะแบก</h3>
-                    <p>ชลบุรี</p>
+                <div class="caption">
+                    <h3>{{ trip.title }}</h3>
+                    <p>{{ trip.province }}</p>
                 </div>
-            </div>
-            <button class="delete">
+            </a>
+            <button class="delete" onclick="deleteTrip('{{ trip.title }}')">
                 <div class="list-icon">
                     <li class="bx bxs-trash"></li>
                 </div>
             </button>
         </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="profile">
-                    <img src="images/02.png" alt="...">
-                </div>
-                <div class="caption">
-                    <h3>สวนสัตว์เปิดเขาเขียว</h3>
-                    <p>ชลบุรี</p>
-                </div>
-            </div>
-            <button class="delete">
-                <div class="list-icon">
-                    <i class="bx bxs-trash"></i>
-                </div>
-            </button>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="profile">
-                    <img src="images/03.png" alt="...">
-                </div>
-                <div class="caption">
-                    <h3>หาดบางแสน</h3>
-                    <p>ชลบุรี</p>
-                </div>
-            </div>
-            <button class="delete">
-                <div class="list-icon">
-                    <i class="bx bxs-trash"></i>
-                </div>
-            </button>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="profile">
-                    <img src="https://img.wongnai.com/p/800x0/2019/02/01/e9c6ad95d81e414f8678dbe3f0f9e1fd.jpg" alt="...">
-                </div>
-                <div class="caption">
-                    <h3>เกาะลอย</h3>
-                    <p>ชลบุรี</p>
-                </div>
-            </div>
-            <button class="delete">
-                <div class="list-icon">
-                    <i class="bx bxs-trash"></i>
-                </div>
-            </button>
-        </div>
-
-        <div class="list-item">
-            <div class="list-content">
-                <div class="profile">
-                    <img src="https://img.wongnai.com/p/800x0/2019/02/01/483318615c624aff841e227cb76cdb36.jpg" alt="...">
-                </div>
-                <div class="caption">
-                    <h3>อ่างเก็บน้ําบางพระ</h3>
-                    <p>ชลบุรี</p>
-                </div>
-            </div>
-            <button class="delete">
-                <div class="list-icon">
-                    <li class="bx bxs-trash"></li>
-            </button>
-        </div>
-
+        {% endfor %}
     </div>
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='js/script-mytrip.js') }}"></script>
+    <script>
+        function deleteTrip(title) {
+            fetch('/delete_trip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title: title })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload(); // รีโหลดหน้าเพื่ออัปเดตข้อมูล
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
     
 </body>
 
-</html>
+{% endblock %}

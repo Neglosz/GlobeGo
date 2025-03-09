@@ -1,27 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     border: 0;
     outline: 0;
     box-sizing: border-box;
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Ubuntu", serif;
 }
 
 body {
-    height: 100vh;
+    margin-top: 15vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #f2f6f9;
     overflow: hidden;
+    margin-left: 25%;
 }
+
+
 
 .list {
     width: 900px;
 }
 
 .list .list-item {
-    margin: 10px 0;
+    margin: 15px 0;
     position: relative;
     display: flex;
     align-items: center;
@@ -47,7 +52,17 @@ body {
     padding: 16px;
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, .04);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.list .list-content:hover{
+    transform: scale(1.01);
+}
+
+
+body.dark-mode .list .list-content{
+    background: #2d2d2d;
 }
 
 .list .list-content .profile {
@@ -65,31 +80,48 @@ body {
 }
 
 .list .list-content img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%; 
     object-fit: cover;
 }
 
 .list .list-content h3 {
     color: #3F3F93;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: -1px;
 }
 
+body.dark-mode .list .list-content h3{
+    color: #fff;
+}
+
 .list .list-content p {
     color: #3F3F93;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 500;
-    margin-top: -16px;
+    margin-top: -5px;
+}
+
+body.dark-mode .list .list-content p{
+    color: #fff;
+}
+
+.list h1 {
+    text-align:center;
+    color: #3F3F93;
+}
+
+body.dark-mode .list h1{
+    color: #cdc1ff;
 }
 
 .list button {
     cursor: pointer;
     position: absolute;
     width: 30%;
-    height: 60%;
+    height: 99%;
     display: flex;
     align-items: center;
     justify-content: flex-start;

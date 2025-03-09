@@ -27,11 +27,20 @@
                         <input type="number" id="number-of-people" placeholder="จำนวนคน" class="w-full pl-10 pr-4 py-2 border-purple-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500">
                     </div>
 
+                    <!-- Location Input -->
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <input type="text" id="location-input" placeholder="ตำแหน่งปัจจุบัน (ไม่บังคับ)" class="w-full pl-10 pr-4 py-2 border-purple-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button type="button" id="get-location-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-700">
+                            <i class="fa fa-paper-plane" style="font-size: 16px;"></i>
+                        </button>
+                    </div>
+
                     <!-- Calendar -->
                     <div class="calendar bg-gray-50 p-4 rounded-lg shadow-inner">
                         <input type="text" id="calendar-input" placeholder="" class="w-full focus:outline-none days">
                     </div>
-                    <button class="btn">Generate</button>
+                    <button class="btn" id="generateBtn">Generate</button>
                 </div>
             </div>
 
@@ -47,9 +56,87 @@
             </div>
         </div>
     </div>
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+        document.getElementById('get-location-btn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // เรียก OpenStreetMap Nominatim API
+                    try {
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const data = await response.json();
+                        
+                        if (data.display_name) {
+                            document.getElementById('location-input').value = data.display_name;
+                        } else {
+                            document.getElementById('location-input').value = "ไม่พบที่อยู่";
+                        }
+                    } catch (error) {
+                        alert('แปลงพิกัดเป็นที่อยู่ล้มเหลว: ' + error.message);
+                    }
+
+                }, function(error) {
+                    alert('ไม่สามารถดึงตำแหน่งได้: ' + error.message);
+                });
+            } else {
+                alert('เบราว์เซอร์นี้ไม่รองรับการดึงตำแหน่ง');
+            }
+        });
+
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            // รับค่าจากฟอร์ม
+            const loading = document.getElementById('loading');
+            loading.style.display = 'flex';
+            const province = document.getElementById('travel-destination').value;
+            const dateRange = document.getElementById('calendar-input').value; // ช่วงวันที่
+            const numPeople = document.getElementById('number-of-people').value; // จำนวนคน
+            const location = document.getElementById('location-input').value;
+            
+            if (!province || !dateRange || !numPeople) {
+                alert('กรุณากรอกจังหวัด, ช่วงวันที่ และจำนวนคน');
+                document.getElementById('loading').style.display = 'none';
+                return;
+            }
+            
+            try {
+                // ส่งคำขอไปยังเซิร์ฟเวอร์
+                const response = await fetch('/get_trips', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        province: province,
+                        date: dateRange,
+                        num_people: numPeople,
+                        location: location
+                    })
+                });
+
+                if (response.ok) {
+                    const trips = await response.json();
+                    sessionStorage.setItem('trips', JSON.stringify(trips));
+                    window.location.href = '/trip';
+                } else {
+                    throw new Error('Failed to generate trips');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการสร้างทริป: ' + error.message);
+                loading.style.display = 'none';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
         flatpickr("#calendar-input", {
             inline: true,           // แสดงปฏิทินตลอดเวลา
             mode: "range",       // เลือกได้หลายวัน
