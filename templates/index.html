@@ -44,15 +44,18 @@
                 </div>
             </div>
 
-            <!-- Right Section: Image and Button -->
-            <div class="w-full md:w-1/2 flex flex-col">
-                <div class="image-container relative mb-4 rounded-lg overflow-hidden shadow-lg">
-                    <img src="{{ url_for('static', filename='images/default_index1.jpg') }}" alt="Travel Destination" class="w-full h-64 object-contain"/>
-                    <div class="carousel-controls absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-4">
-                        <i class="arrow left text-white text-2xl cursor-pointer bg-gray-800 bg-opacity-50 p-2 rounded-full">◀</i>
-                        <i class="arrow right text-white text-2xl cursor-pointer bg-gray-800 bg-opacity-50 p-2 rounded-full">▶</i>
+            <!-- Right Section: Random Trip -->
+            <div class="trip-image-container">
+                <a id="place-link">
+                    <div class="trip-title-overlay">
+                        <p id="place-title">Loading...</p>
                     </div>
-                </div>
+                    <img id="place-image" src="{{ url_for('static', filename='images/default_trip.jpg') }}" 
+                        alt="Random Trip" />
+                    <div class="trip-location-overlay">
+                        <p id="province-title"></p> <!-- จังหวัด -->
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -143,6 +146,25 @@
             dateFormat: "d-m-Y",    // รูปแบบวันที่
             minDate: "today",       // เริ่มจากวันปัจจุบัน
             theme: "light",         // ใช้ธีมสีสว่าง
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            try {
+                let response = await fetch("/random_place"); 
+                let trip = await response.json();
+        
+                if (!trip.error) {
+                    document.getElementById("place-title").textContent = trip.title || "ไม่มีชื่อทริป"; // ใช้ชื่อทริป
+                    document.getElementById("province-title").textContent = "📍 " + trip.province; // ใส่จังหวัด
+                    document.getElementById("place-image").src = trip.image; // ใช้รูปภาพทริป
+                    document.getElementById("place-link").href = `/location/random_trip`; // ลิงก์ไปที่หน้ารายละเอียด
+                } else {
+                    document.getElementById("place-title").textContent = "No trips available";
+                }
+            } catch (error) {
+                console.error("Error fetching trip:", error);
+            }
         });
     </script>
 </body>

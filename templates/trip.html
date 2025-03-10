@@ -149,7 +149,7 @@
       <div class="swiper-wrapper">
         {% for trip in trips %}
         <div class="swiper-slide">
-          <a href="{{ url_for('location', trip_title=trip.title) }}?province={{ trip.province }}">
+          <a href="{{ url_for('location', trip_title=trip.title) }}?province={{ trip.province }}&from=trip">
             <img src="{{ trip.image }}" alt="{{ trip.title }}" />
             <div class="trip-title-overlay">{{ trip.title }}</div>
           </a>

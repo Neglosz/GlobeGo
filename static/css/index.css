@@ -193,6 +193,58 @@ body.dark-mode .calendar .days{
     100% { transform: rotate(360deg); }
 }
 
+
+.trip-image-container {
+    position: relative;
+    width: 50%;
+    height: 633px; /* กำหนดความสูงของรูป */
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ปรับขนาดรูปให้เต็มพื้นที่ */
+.trip-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+}
+
+.trip-image-container img:hover {
+    transform: scale(1.05);
+}
+
+/* ทำให้ชื่อทริปยังอยู่ด้านบน */
+.trip-title-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+    z-index: 10; /* ทำให้ชื่ออยู่ด้านบน */
+}
+
+/* ให้ตำแหน่งจังหวัดอยู่ด้านล่าง */
+.trip-location-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ddd;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px;
+    text-align: center;
+    z-index: 10; /* ทำให้จังหวัดยังแสดงอยู่ */
+}
+
 /* สไตล์สำหรับ Dark Mode */
 body.dark-mode .container {
     background-color: #1a1a1a; /* พื้นหลังสีเทาเข้มตามภาพ */

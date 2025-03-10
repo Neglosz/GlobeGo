@@ -213,3 +213,23 @@ button:active .shadow {
 button:focus:not(:focus-visible) {
     outline: none;
 }
+
+.back-button {
+    position: fixed; /* เปลี่ยนจาก absolute เป็น fixed */
+    top: 120px; /* เลื่อนปุ่มลงมาให้พ้น navbar */
+    left: 30px;
+    background: #3f3f93;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    z-index: 1000; /* ทำให้ปุ่มอยู่ด้านบนสุด */
+}
+
+
+.back-button:hover {
+    background: #292978;
+}

@@ -15,6 +15,7 @@ from PIL import Image, ExifTags
 import uuid
 import glob
 import requests
+import random
 
 load_dotenv()
 
@@ -53,6 +54,18 @@ genai.configure(api_key=gemini_api)
 
 PEXELS_API_KEY = os.getenv('PIXEL_API')  # เปลี่ยนเป็น API Key ของคุณ
 PEXELS_BASE_URL = "https://api.pexels.com/v1/search"
+
+
+places_list = [
+    "Bangkok", "Samut Prakan", "Nonthaburi", "Pathum Thani", "Phra Nakhon Si Ayutthaya", "Ang Thong", "Lopburi", "Sing Buri", "Chai Nat", "Saraburi",
+    "Nakhon Nayok", "Prachin Buri", "Sa Kaeo", "Chonburi", "Rayong", "Chanthaburi", "Trat", "Chachoengsao",
+    "Ratchaburi", "Kanchanaburi", "Suphan Buri", "Nakhon Pathom", "Samut Sakhon", "Samut Songkhram", "Phetchaburi", "Prachuap Khiri Khan",
+    "Chumphon", "Ranong", "Surat Thani", "Phang Nga", "Phuket", "Krabi", "Nakhon Si Thammarat", "Trang", "Phatthalung", "Satun", "Songkhla", "Pattani", "Yala", "Narathiwat",
+    "Chiang Mai", "Lamphun", "Lampang", "Uttaradit", "Phrae", "Nan", "Phayao", "Chiang Rai", "Mae Hong Son",
+    "Nakhon Sawan", "Uthai Thani", "Kamphaeng Phet", "Tak", "Sukhothai", "Phitsanulok", "Phichit", "Phetchabun",
+    "Maha Sarakham", "Roi Et", "Kalasin", "Mukdahan", "Yasothon", "Amnat Charoen", "Nong Khai", "Bueng Kan", "Nong Bua Lamphu", "Udon Thani", "Sakon Nakhon", "Nakhon Phanom",
+    "Khon Kaen", "Chaiyaphum", "Nakhon Ratchasima", "Buri Ram", "Surin", "Si Sa Ket", "Ubon Ratchathani"
+]
 
 def get_trip_image(keyword):
     headers = {"Authorization": PEXELS_API_KEY}
@@ -548,6 +561,38 @@ def get_trip_image_endpoint():
     title = request.args.get('title', '')
     image_url = get_trip_image(title)
     return image_url
+
+@app.route('/random_place')
+def random_place():
+    random_province = random.choice(places_list)  # สุ่มจังหวัด
+    trips = generate_trips(random_province, None, None)  # สร้างทริป
+
+    if trips and len(trips) > 0:
+        trip = trips[0]  # เอาทริปแรกมาใช้
+        trip_title = trip.get("title", "ทริปไม่มีชื่อ")  # ถ้าไม่มีชื่อ ให้ใช้ข้อความเริ่มต้น
+        trip_image = get_trip_image(trip_title)  # ดึงรูปภาพ
+        trip["image"] = trip_image
+        trip["province"] = random_province  # เก็บจังหวัดไว้
+        session['random_trip'] = trip  # เก็บลง session
+
+        return jsonify({
+            "title": trip_title,   # ส่งชื่อทริปไป
+            "province": random_province,  # จังหวัด
+            "image": trip_image   # รูปภาพ
+        })
+    
+    return jsonify({"error": "No trips available"}), 500
+
+@app.route('/location/random_trip')
+def location_random_trip():
+    trip = session.get('random_trip')
+
+    if not trip:
+        flash('ไม่มีข้อมูลทริป กรุณาลองใหม่')
+        return redirect(url_for('index'))
+
+    return render_template('location.html', trip=trip, province=trip.get('province', ''))
+
 
 
 if __name__ == '__main__':

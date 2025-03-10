@@ -8,7 +8,7 @@
 </head>
 
 <body>
-
+    <a id="back-button" class="back-button" href="#">&#x2190; Back</a>
     <!-- Trip Name -->
     <h2 class="trip-name">{{ trip.title }}</h2>
 
@@ -49,6 +49,24 @@
         {{ trip | tojson | safe }}
     </script>    
     <script src="{{ url_for('static', filename='js/location.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const backButton = document.getElementById("back-button");
+    
+            // อ่านค่า `from` จาก query string
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromPage = urlParams.get("from");
+    
+            // ตั้งค่าปุ่มย้อนกลับ
+            if (fromPage === "trip") {
+                backButton.href = "{{ url_for('trip') }}";
+            } else if (fromPage === "mytrip") {
+                backButton.href = "{{ url_for('mytrips') }}";
+            } else {
+                backButton.href = "{{ url_for('index') }}"; // ค่าเริ่มต้นกลับไปที่หน้าแรก
+            }
+        });
+    </script>
 
 </body>
 {% endblock %}

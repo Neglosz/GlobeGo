@@ -7,3 +7,5 @@ pymongo
 dotenv
 google-generativeai
 Pillow
+fastapi
+uvicorn
