@@ -22,7 +22,11 @@ body {
 
 
 .list {
-    width: 900px;
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* จัดให้เนื้อหากึ่งกลาง */
 }
 
 .list .list-item {
@@ -72,10 +76,11 @@ body.dark-mode .list .list-content{
 
 .list .list-content .caption {
     width: 75%;
-    padding-left: 6px;
     display: grid;
+    margin-left: 80px;
     align-items: center;
     justify-content: flex-start;
+    position: fixed;
     pointer-events: none;
 }
 
@@ -142,15 +147,89 @@ body.dark-mode .list h1{
     cursor: pointer;
 }
 
-@media (min-width: 400px) {
+.list button .list-icon {
+    width: 65px;
+    font-size: 28px;
+}
 
-    .list button .list-icon {
-        width: 65px;
-        font-size: 28px;
+.list .list-item:hover .delete {
+    transform: translateX(70px);
+}
+
+@media (min-width: 1024px) {
+    .list {
+        width: 80%;
+        margin-left: -7%;
     }
+}
 
+@media (min-width: 768px) and (max-width: 1023px) {
+    .list {
+        width: 80%;
+        margin-left: -7%;
+    }
     .list .list-item:hover .delete {
-        transform: translateX(70px);
+        transform: scale(1.01);
     }
+    .list .delete {
+        z-index: 1;
+    }
+    .list button {
+        width: 6vh;
+        height: 50%;
+        border-radius: 50%;
+    }
+    .list button .list-icon {
+        font-size: 22px;
+    }
+}
 
+@media (min-width: 421px) and (max-width: 767px) {
+    .list {
+        width: 110%;
+        margin-left: -19%;
+        scale: 80%;
+    }
+    .list .list-content:hover{
+        transform: none;
+    }
+    .list .list-item:hover .delete {
+        transform: none;
+    }
+    .list .delete {
+        z-index: 1;
+    }
+    .list button {
+        width: 6vh;
+        height: 50%;
+        border-radius: 50%;
+    }
+    .list button .list-icon {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 420px) {
+    .list {
+        width: 140%;
+        margin-left: -37%;
+        scale: 80%;
+    }
+    .list .list-content:hover{
+        transform: none;
+    }
+    .list .list-item:hover .delete {
+        transform: none;
+    }
+    .list .delete {
+        z-index: 1;
+    }
+    .list button {
+        width: 6vh;
+        height: 50%;
+        border-radius: 50%;
+    }
+    .list button .list-icon {
+        font-size: 22px;
+    }
 }

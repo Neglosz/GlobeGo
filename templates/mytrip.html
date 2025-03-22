@@ -48,6 +48,13 @@
     <script src="{{ url_for('static', filename='js/script-mytrip.js') }}"></script>
     <script>
         function deleteTrip(title) {
+            // เพิ่มการแจ้งเตือนเพื่อยืนยันการลบ
+            if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?")) {
+                // ถ้ากด "Cancel" ให้ return ออกไป ไม่ลบ
+                return;
+            }
+    
+            // ถ้ากด "OK" ให้ลบข้อมูลผ่าน Fetch API
             fetch('/delete_trip', {
                 method: 'POST',
                 headers: {
@@ -58,12 +65,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload(); // รีโหลดหน้าเพื่ออัปเดตข้อมูล
+                    // รีโหลดหน้าเพื่ออัปเดตรายการ
+                    location.reload();
                 }
             })
             .catch(error => console.error('Error:', error));
         }
     </script>
+    
     
 </body>
 

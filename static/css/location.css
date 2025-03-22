@@ -233,3 +233,74 @@ button:focus:not(:focus-visible) {
 .back-button:hover {
     background: #292978;
 }
+
+
+@media (min-width: 1024px) {
+    
+}
+
+/* Fixed media query for tablets */
+@media (min-width: 768px) and (max-width: 1023px) {
+    
+}
+
+/* Fixed media query for small tablets and large phones */
+@media (min-width: 421px) and (max-width: 767px) {
+    .back-button {
+        top: 100px;
+        left: 0px;
+        scale: 60%;
+    }
+    .trip-name {
+        font-size: 18px;
+    }
+    .location-header {
+        font-size: 14px;
+    }
+    .header-location {
+        min-width: 30%;
+    }
+    .header-time {
+        min-width: 30%;
+    }
+    .location-name {
+        font-size: 14px;
+    }
+    .location-time {
+        font-size: 14px;
+    }
+    .add-trip-button {
+        justify-content: center;
+    }
+    
+}
+  
+  /* Fixed media query for mobile phones */
+@media (max-width: 420px) {
+    .back-button {
+        top: 100px;
+        left: 0px;
+        scale: 60%;
+    }
+    .trip-name {
+        font-size: 18px;
+    }
+    .location-header {
+        font-size: 12px;
+    }
+    .header-location {
+        min-width: 30%;
+    }
+    .header-time {
+        min-width: 30%;
+    }
+    .location-name {
+        font-size: 12px;
+    }
+    .location-time {
+        font-size: 12px;
+    }
+    .add-trip-button {
+        justify-content: center;
+    }
+}

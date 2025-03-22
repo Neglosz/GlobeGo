@@ -73,6 +73,7 @@ p {
     justify-content: flex-start;
     align-items: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    max-width: 180px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -211,41 +212,133 @@ body.dark-mode .upload-button {
 body.dark-mode .upload-button:hover {
     background-color: #9469cc;
 }
-/* Responsive Design */
-@media (max-width: 800px) {
-    .profile-card {
-        max-width: 90%;
-        margin: 10px;
-    }
-
-    .profile-button {
-        font-size: 12px;
-        width: 200%;
-        padding: 10px;
+@media (min-width: 1024px) {
+    .profile-button{
+        width: 150%;
     }
 }
-/* Responsive Design */
-@media (max-width: 500px) {
-    .profile-card {
-        max-width: 90%;
-        margin: 10px;
-    }
 
+/* Fixed media query for tablets */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .profile-card {
+      width: 80%;
+    }
+  
+    .profile-content {
+      padding: 60px 40px;
+    }
+  
+    .buttons {
+      width: 50%;
+      margin-left: 25%;
+    }
+  
     .profile-button {
-        font-size: 12px;
-        width: 250%;
-        padding: 10px;
+      width: 100%;
+      font-size: 12px;
+    }
+  
+    .profile-button i {
+      font-size: 16px;
+    }
+  
+    .toggle-switch {
+      font-size: 10px;
+      font-weight: 500;
     }
 }
-@media (max-width: 499px) {
-    .profile-card {
-        max-width: 90%;
-        margin: 10px;
-    }
 
+/* Fixed media query for small tablets and large phones */
+@media (min-width: 421px) and (max-width: 767px) {
+    .profile-card {
+      width: 90%;
+    }
+  
+    .profile-content {
+      padding: 40px 20px;
+    }
+  
+    .buttons {
+      width: 70%;
+      margin-left: 15%;
+    }
+  
     .profile-button {
-        font-size: 12px;
-        width: 350%;
-        padding: 10px;
+      width: 100%;
+      font-size: 12px;
+      padding: 10px;
+    }
+  
+    .profile-button i {
+      font-size: 14px;
+    }
+  
+    .toggle-switch {
+      font-size: 10px;
+    }
+  
+    .profile-image-container img {
+      width: 120px;
+      height: 120px;
+    }
+  
+    h1 {
+      font-size: 18px;
+    }
+  
+    p {
+      font-size: 14px;
+    }
+}
+  
+  /* Fixed media query for mobile phones */
+@media (max-width: 420px) {
+    .profile-card {
+      width: 95%;
+    }
+  
+    .profile-content {
+      padding: 30px 15px;
+    }
+  
+    .buttons {
+      width: 90%;
+      margin-left: 5%;
+    }
+  
+    .profile-button {
+      width: 100%;
+      font-size: 11px;
+      padding: 8px;
+    }
+  
+    .profile-button i {
+      font-size: 14px;
+      margin-right: 5px;
+    }
+  
+    .toggle-switch {
+      font-size: 9px;
+      padding: 3px 6px;
+    }
+  
+    .profile-image-container img {
+      width: 100px;
+      height: 100px;
+    }
+  
+    h1 {
+      font-size: 16px;
+      margin: 10px 0 5px;
+    }
+  
+    p {
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+  
+    .input-box input {
+      padding: 8px;
+      font-size: 12px;
     }
 }

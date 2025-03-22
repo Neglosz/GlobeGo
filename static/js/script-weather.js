@@ -2,6 +2,7 @@ const searchInput = document.querySelector(".search-input");
 const locationButton = document.querySelector(".location-button");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const hourlyWeatherDiv = document.querySelector(".hourly-weather .weather-list");
+const loadingDiv = document.getElementById("loading");
 
 //Weather codes for mapping to custom icons
 const weatherCodes = {
@@ -43,6 +44,8 @@ const getWeatherDetails = async (API_URL) => {
     window.innerWidth <= 768 && searchInput.blur();
     document.body.classList.remove("show-no-results"); 
 
+    loadingDiv.style.display = "flex"
+
     try {
         //Fetch weather data from API
         const response = await fetch(API_URL);
@@ -65,7 +68,12 @@ const getWeatherDetails = async (API_URL) => {
         searchInput.value = data.location.name;
     } catch (error) {
         document.body.classList.add("show-no-results");
+    } finally {
+        setTimeout(() => {
+            loadingDiv.style.display = "none";
+        }, 1000);
     }
+    
 }
 
 //Set up the weather request for a specific city

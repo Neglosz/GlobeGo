@@ -8,9 +8,6 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
-import time
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 from PIL import Image, ExifTags
 import uuid
 import glob
@@ -144,7 +141,72 @@ def resize_image(file, email, target_size=(512, 512)):
 # ปรับฟังก์ชัน generate_trips ให้ใช้ location
 def generate_trips(province, date_range, num_people, location=None):
     model = genai.GenerativeModel('gemini-2.0-flash')
+    prompt = f"""สร้างทริปการเดินทาง 3 ทริปที่ไม่ซ้ำกันสำหรับจังหวัด {province} ในช่วงวันที่ {date_range} โดยมีจำนวนคน {num_people} คน ทริปต้องมีรายละเอียดของทุกวันตั้งแต่ {date_range.split(' to ')[0]} ถึง {date_range.split(' to ')[1]}
+                หากบางวันมีกิจกรรมน้อยกว่า 2 ที่ ให้เพิ่มวันได้จนกว่าจะครบวันทั้งหมด
+                ให้ระบุเวลาและกิจกรรมแต่ละวันให้ครบถ้วน และต้องไม่มีวันใดหายไป"""
+    
+    if date_range:
+        prompt += f"""ทริปต้องมีรายละเอียดของทุกวันตั้งแต่ {date_range.split(' to ')[0]} ถึง {date_range.split(' to ')[1]}
+                หากบางวันมีกิจกรรมน้อยกว่า 2 ที่ ให้เพิ่มวันได้จนกว่าจะครบวันทั้งหมด
+                ให้ระบุเวลาและกิจกรรมแต่ละวันให้ครบถ้วน และต้องไม่มีวันใดหายไป"""
+    
+    if location:
+        prompt += f" และคำนึงถึงตำแหน่งปัจจุบันที่อยู่ใกล้กับ {location}"
+
+    prompt += """
+    พร้อมชื่อทริปสั้นๆเป็นภาษาอังกฤษ โดยระบุเวลาที่เป็นไปตามความจริงที่สุด และกิจกรรมอย่างละเอียด รายละเอียดกิจกรรมขอเป็นภาษาไทยทั้งหมด ถ้าที่เที่ยวในวันนั้นน้อยกว่า2ที่ให้เพิ่มวันได้ ย้ำว่ามีเวลากำกับด้วย และถ้ามีคำแนะนำก็สามารถใส่เข้ามาได้
+    ตอบกลับในรูปแบบ JSON เท่านั้น ห้ามมีอักษรพิเศษ เช่น ``` หรือตัวอักษรนอก JSON:
+    {
+        "trips": [
+            {
+                "title": "ชื่อทริป",
+                "activities": [
+                    {"time": "08:00", "activity": "กิจกรรมที่ 1", "location": "สถานที่ 1"},
+                    {"time": "10:00", "activity": "กิจกรรมที่ 2", "location": "สถานที่ 2"}
+                ]
+            }
+        ]
+    }
+    """
+
+    response = model.generate_content(prompt)
+    raw_response = response.text.strip()
+    print("Raw Response:", raw_response)  # ✅ ตรวจสอบค่า API Response
+    # ✅ ใช้ Regular Expression เพื่อลบ {{ }} ที่อาจเกิดขึ้น
+    cleaned_response = re.sub(r'```json|```', '', raw_response)  # ลบ Markdown syntax
+    cleaned_response = re.sub(r'{{\s*', '{', cleaned_response)   # ลบ {{
+    cleaned_response = re.sub(r'\s*}}', '}', cleaned_response)   # ลบ }}
+    cleaned_response = cleaned_response.strip()  # ลบช่องว่างส่วนเกิน
+    print("cleaned_response:", cleaned_response)  # ✅ ตรวจสอบค่า API Response
+
+    try:
+        trips_data = json.loads(cleaned_response)  # ✅ แปลง JSON ที่สะอาดแล้ว
+        if "trips" not in trips_data:
+            raise ValueError("Invalid JSON format: 'trips' key not found")  # ถ้า JSON ไม่มี "trips" ให้ถือว่าผิดพลาด
+
+        # ✅ แปลง "activities" ให้เป็นข้อความ
+        for trip in trips_data.get("trips", []):
+            trip["activities"] = [
+                f"{act['time']} - {act['activity']} ({act['location']})"
+                for act in trip.get("activities", [])
+            ]
+
+    except (json.JSONDecodeError, ValueError) as e:
+        print("❌ JSON Decode Failed:", e)  # แจ้งเตือนว่ามีปัญหา
+        trips_data = {"trips": []}
+
+
+    return trips_data["trips"]
+
+
+def generate_trips_random(province, date_range, num_people, location=None):
+    model = genai.GenerativeModel('gemini-2.0-flash')
     prompt = f"สร้างทริปการเดินทาง 3 ทริปที่ไม่ซ้ำกันสำหรับจังหวัด {province} ในช่วงวันที่ {date_range} โดยมีจำนวนคน {num_people} คน"
+    
+    if date_range:
+        prompt += f"""ทริปต้องมีรายละเอียดของทุกวันตั้งแต่ {date_range.split(' to ')[0]} ถึง {date_range.split(' to ')[1]}
+                หากบางวันมีกิจกรรมน้อยกว่า 2 ที่ ให้เพิ่มวันได้จนกว่าจะครบวันทั้งหมด
+                ให้ระบุเวลาและกิจกรรมแต่ละวันให้ครบถ้วน และต้องไม่มีวันใดหายไป"""
     
     if location:
         prompt += f" และคำนึงถึงตำแหน่งปัจจุบันที่อยู่ใกล้กับ {location}"
@@ -565,7 +627,7 @@ def get_trip_image_endpoint():
 @app.route('/random_place')
 def random_place():
     random_province = random.choice(places_list)  # สุ่มจังหวัด
-    trips = generate_trips(random_province, None, None)  # สร้างทริป
+    trips = generate_trips_random(random_province, None, num_people=1)  # สร้างทริป
 
     if trips and len(trips) > 0:
         trip = trips[0]  # เอาทริปแรกมาใช้
