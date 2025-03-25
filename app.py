@@ -306,8 +306,8 @@ def forgot_password():
         if user:
             # สร้างโทเค็นที่มีอายุ 30 นาที (1800 วินาที)
             token = s.dumps(email, salt='password-reset-salt')
-            send_reset_email(email, token)
             flash('ลิงก์รีเซ็ตรหัสผ่านได้ถูกส่งไปยังอีเมลของคุณแล้ว')
+            send_reset_email(email, token)
             return redirect(url_for('login_page'))
         else:
             flash('ไม่พบอีเมลนี้ในระบบ')
@@ -344,14 +344,6 @@ def reset_password(token):
 def logout():
     session.pop('user', None)
     return redirect(url_for('login_page'))
-
-
-@app.route('/protected')
-def protected():
-    if 'user' in session:
-        return f"ยินดีต้อนรับ {session['user']} คุณอยู่ในหน้า Protected"
-    else:
-        return redirect(url_for('login_page'))
     
 @app.route('/delete_account', methods=['POST'])
 def delete_account():
@@ -482,28 +474,6 @@ def get_trips():
     return jsonify(trips=trips)
 
 
-@app.route('/remove_trip', methods=['POST'])
-def remove_trip():
-    trip_to_remove = request.form['trip']
-    province = request.form['province']
-    date = request.form['date']
-    location = request.form.get('location')
-
-    remaining_trips = json.loads(request.form['trips'])
-    trip_index = next((i for i, trip in enumerate(remaining_trips) if trip["title"] == trip_to_remove), None)
-
-    if trip_index is not None:
-        # ✅ ตรวจสอบว่าการสร้างทริปใหม่ไม่ส่งคืนลิสต์ว่าง
-        new_trips = generate_trips(province, date, location)
-        
-        if not new_trips:  # ถ้าไม่มีทริปใหม่ให้คืนค่าที่มีอยู่เดิม
-            return jsonify(trips=remaining_trips)
-            
-        new_trip = new_trips[0]  # ใช้ทริปแรกจากลิสต์ใหม่
-        remaining_trips[trip_index] = new_trip
-
-    return jsonify(trips=remaining_trips)
-
 
 # _____________________Weather_____________________
 
@@ -570,7 +540,7 @@ def save_trip():
         return jsonify({'error': 'บันทึกทริปได้สูงสุด 5 ทริป กรุณาลบทริปเก่าออกก่อน'}), 400
     
     if any(trip['title'] == trip_data['title'] for trip in saved_trips):
-        return jsonify({'error': 'ทรืปนี้ถูกบันทึกไว้แล้ว'}), 400
+        return jsonify({'error': 'ทริปนี้ถูกบันทึกไว้แล้ว'}), 400
     
     users_collection.update_one(
         {'email': email},
