@@ -141,20 +141,13 @@ def resize_image(file, email, target_size=(512, 512)):
 # ปรับฟังก์ชัน generate_trips ให้ใช้ location
 def generate_trips(province, date_range, num_people, location=None):
     model = genai.GenerativeModel('gemini-2.0-flash')
-    prompt = f"""สร้างทริปการเดินทาง 3 ทริปที่ไม่ซ้ำกันสำหรับจังหวัด {province} ในช่วงวันที่ {date_range} โดยมีจำนวนคน {num_people} คน ทริปต้องมีรายละเอียดของทุกวันตั้งแต่ {date_range.split(' to ')[0]} ถึง {date_range.split(' to ')[1]}
-                หากบางวันมีกิจกรรมน้อยกว่า 2 ที่ ให้เพิ่มวันได้จนกว่าจะครบวันทั้งหมด
-                ให้ระบุเวลาและกิจกรรมแต่ละวันให้ครบถ้วน และต้องไม่มีวันใดหายไป"""
-    
-    if date_range:
-        prompt += f"""ทริปต้องมีรายละเอียดของทุกวันตั้งแต่ {date_range.split(' to ')[0]} ถึง {date_range.split(' to ')[1]}
-                หากบางวันมีกิจกรรมน้อยกว่า 2 ที่ ให้เพิ่มวันได้จนกว่าจะครบวันทั้งหมด
-                ให้ระบุเวลาและกิจกรรมแต่ละวันให้ครบถ้วน และต้องไม่มีวันใดหายไป"""
+    prompt = f"""สร้างทริปการเดินทาง 3 ทริปที่ไม่ซ้ำกันสำหรับจังหวัด {province} ในวันที่ {date_range} โดยมีจำนวนคน {num_people} คน ให้ระบุเวลาและกิจกรรมแต่ละวันให้ครบถ้วน และต้องไม่มีวันใดหายไป"""
     
     if location:
         prompt += f" และคำนึงถึงตำแหน่งปัจจุบันที่อยู่ใกล้กับ {location}"
 
     prompt += """
-    พร้อมชื่อทริปสั้นๆเป็นภาษาอังกฤษ โดยระบุเวลาที่เป็นไปตามความจริงที่สุด และกิจกรรมอย่างละเอียด รายละเอียดกิจกรรมขอเป็นภาษาไทยทั้งหมด ถ้าที่เที่ยวในวันนั้นน้อยกว่า2ที่ให้เพิ่มวันได้ ย้ำว่ามีเวลากำกับด้วย และถ้ามีคำแนะนำก็สามารถใส่เข้ามาได้
+    พร้อมชื่อทริปสั้นๆเป็นภาษาอังกฤษ โดยระบุเวลาที่เป็นไปตามความจริงที่สุด และกิจกรรมอย่างละเอียด รายละเอียดกิจกรรมขอเป็นภาษาไทยทั้งหมด และถ้ามีคำแนะนำก็สามารถใส่เข้ามาได้
     ตอบกลับในรูปแบบ JSON เท่านั้น ห้ามมีอักษรพิเศษ เช่น ``` หรือตัวอักษรนอก JSON:
     {
         "trips": [
@@ -168,7 +161,7 @@ def generate_trips(province, date_range, num_people, location=None):
         ]
     }
     """
-
+    print(prompt)
     response = model.generate_content(prompt)
     raw_response = response.text.strip()
     print("Raw Response:", raw_response)  # ✅ ตรวจสอบค่า API Response
@@ -202,11 +195,6 @@ def generate_trips(province, date_range, num_people, location=None):
 def generate_trips_random(province, date_range, num_people, location=None):
     model = genai.GenerativeModel('gemini-2.0-flash')
     prompt = f"สร้างทริปการเดินทาง 3 ทริปที่ไม่ซ้ำกันสำหรับจังหวัด {province} ในช่วงวันที่ {date_range} โดยมีจำนวนคน {num_people} คน"
-    
-    if date_range:
-        prompt += f"""ทริปต้องมีรายละเอียดของทุกวันตั้งแต่ {date_range.split(' to ')[0]} ถึง {date_range.split(' to ')[1]}
-                หากบางวันมีกิจกรรมน้อยกว่า 2 ที่ ให้เพิ่มวันได้จนกว่าจะครบวันทั้งหมด
-                ให้ระบุเวลาและกิจกรรมแต่ละวันให้ครบถ้วน และต้องไม่มีวันใดหายไป"""
     
     if location:
         prompt += f" และคำนึงถึงตำแหน่งปัจจุบันที่อยู่ใกล้กับ {location}"
@@ -658,4 +646,4 @@ def location_random_trip():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
