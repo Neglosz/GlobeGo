@@ -19,6 +19,13 @@
                         alert("{{ message }}");
                     </script>
                 {% endif %}
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <script>
+                            alert("{{ messages[-1] }}");
+                        </script>
+                    {% endif %}
+                {% endwith %}
                 <div class="input-box">
                     <input type="email" name="email" placeholder="Email" required>
                     <i class='bx bxs-envelope' ></i>
